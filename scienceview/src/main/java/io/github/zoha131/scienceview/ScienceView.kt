@@ -17,15 +17,16 @@ import androidx.lifecycle.OnLifecycleEvent
 import kotlinx.coroutines.*
 
 @SuppressLint("SetJavaScriptEnabled")
-class ScienceView (context: Context?= null, attrs: AttributeSet? = null) : WebView(context, attrs), LifecycleObserver{
+class ScienceView<T> (context: Context?= null, attrs: AttributeSet? = null) : WebView(context, attrs), LifecycleObserver{
 
     private val scienceViewScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var isLoaded = false
+    private var model: ((T)->String)? = null
 
     init {
         settings.javaScriptEnabled = true
-
-        // render MathJax once page finishes loading
+        addJavascriptInterface(MathJaxConfig(), "BridgeConfig")
+        loadUrl("file:///android_asset/science_view.html")
 
         webViewClient = object : WebViewClient(){
             override fun onPageFinished(view: WebView?, url: String?) {
@@ -34,14 +35,11 @@ class ScienceView (context: Context?= null, attrs: AttributeSet? = null) : WebVi
             }
         }
 
-        addJavascriptInterface(MathJaxConfig(), "BridgeConfig")
-        loadUrl("file:///android_asset/science_view.html")
-
         (context as LifecycleOwner).lifecycle.addObserver(this)
     }
 
     fun addCSS(@RawRes css: Int){
-        scienceViewScope.launch(Dispatchers.Main) {
+        scienceViewScope.launch {
 
             while (!isLoaded) delay(500)
 
@@ -63,19 +61,23 @@ class ScienceView (context: Context?= null, attrs: AttributeSet? = null) : WebVi
 
     }*/
 
-    fun setHTML(data: String){
-        scienceViewScope.launch(Dispatchers.Main) {
+    fun setModel(model: (T)-> String){
+        this.model = model
+    }
+
+    fun setData( data: T){
+
+        if(model == null) throw NullPointerException("model has not been initialized")
+
+        scienceViewScope.launch {
 
             while (!isLoaded) delay(500)
-            loadUrl("javascript:loadHTML(`$data`);")
+            loadUrl("javascript:loadHTML(`${model?.invoke(data)}`);")
         }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun stop(){
         scienceViewScope.cancel()
-        Log.d("ONSTOPCALLED", "Coroutines has been stopped")
     }
-
-
 }
