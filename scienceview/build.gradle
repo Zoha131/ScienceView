@@ -1,6 +1,30 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+ext {
+    bintrayRepo = "ScienceView"
+    bintrayName = "io.github.zoha131.scienceview"
+
+    libraryName = "scienceview"
+
+    publishedGroupId = 'io.github.zoha131.scienceview'
+    artifact = 'scienceview'
+    libraryVersion = '0.0.1'
+
+    libraryDescription = 'Mathjax support for Android'
+    siteUrl = 'https://github.com/Zoha131/ScienceView'
+    gitUrl = 'https://github.com/Zoha131/ScienceView.git'
+    developerId = 'zoha131'
+    developerName = 'MD Abir Hasan Zoha'
+    developerEmail = 'abirhasanzoha@gmail.com'
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 android {
     compileSdkVersion 28
 
@@ -43,4 +67,13 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+}
+
+repositories {
+    mavenCentral()
+}
+
+if(project.rootProject.file('local.properties').exists()){
+    apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+    apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
 }
