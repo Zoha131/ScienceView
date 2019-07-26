@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
 import android.util.Log
+import android.webkit.JavascriptInterface
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -22,10 +23,12 @@ class ScienceView<T> (context: Context?= null, attrs: AttributeSet? = null) : We
     private val scienceViewScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var isLoaded = false
     private var model: ((T)->String)? = null
+    private var scienceClickListener: ((String, String)->Unit)? = null
 
     init {
         settings.javaScriptEnabled = true
         addJavascriptInterface(MathJaxConfig(), "BridgeConfig")
+        addJavascriptInterface(this, "Bridge")
         loadUrl("file:///android_asset/science_view.html")
 
         webViewClient = object : WebViewClient(){
@@ -74,6 +77,15 @@ class ScienceView<T> (context: Context?= null, attrs: AttributeSet? = null) : We
             while (!isLoaded) delay(500)
             loadUrl("javascript:loadHTML(`${model?.invoke(data)}`);")
         }
+    }
+
+    fun setScienceClickListener(scienceClickListener: (tag: String, data: String)->Unit){
+        this.scienceClickListener = scienceClickListener
+    }
+
+    @JavascriptInterface
+    fun jsOnClick(tag: String, data: String){
+        scienceClickListener?.invoke(tag, data)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
