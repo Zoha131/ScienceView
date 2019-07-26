@@ -10,12 +10,16 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.annotation.IntegerRes
 import androidx.annotation.RawRes
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
 import kotlinx.coroutines.*
 
 @SuppressLint("SetJavaScriptEnabled")
-class ScienceView (context: Context?= null, attrs: AttributeSet? = null) : WebView(context, attrs){
+class ScienceView (context: Context?= null, attrs: AttributeSet? = null) : WebView(context, attrs), LifecycleObserver{
 
-    private val scienceViewScope = CoroutineScope(Job()+Dispatchers.Main)
+    private val scienceViewScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var isLoaded = false
 
     init {
@@ -32,10 +36,12 @@ class ScienceView (context: Context?= null, attrs: AttributeSet? = null) : WebVi
 
         addJavascriptInterface(MathJaxConfig(), "BridgeConfig")
         loadUrl("file:///android_asset/science_view.html")
+
+        (context as LifecycleOwner).lifecycle.addObserver(this)
     }
 
     fun addCSS(@RawRes css: Int){
-        GlobalScope.launch(Dispatchers.Main) {
+        scienceViewScope.launch(Dispatchers.Main) {
 
             while (!isLoaded) delay(500)
 
@@ -58,11 +64,17 @@ class ScienceView (context: Context?= null, attrs: AttributeSet? = null) : WebVi
     }*/
 
     fun setHTML(data: String){
-        GlobalScope.launch(Dispatchers.Main) {
+        scienceViewScope.launch(Dispatchers.Main) {
 
             while (!isLoaded) delay(500)
             loadUrl("javascript:loadHTML(`$data`);")
         }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun stop(){
+        scienceViewScope.cancel()
+        Log.d("ONSTOPCALLED", "Coroutines has been stopped")
     }
 
 
