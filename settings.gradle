@@ -1,0 +1,2 @@
+include ':app', ':scienceview'
+rootProject.name='ScienceView'
