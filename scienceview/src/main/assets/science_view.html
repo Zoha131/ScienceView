@@ -56,26 +56,6 @@
 
         <script type="text/javascript">
 
-          function changeToMML() {
-            MathJax.Hub.Config({
-                 jax: ['input/TeX','output/NativeMML']
-            });
-
-                var element = document.getElementById('math');
-                MathJax.Hub.Queue(['Typeset',MathJax.Hub,element]);
-          }
-
-          function rendererCallBack() {
-                <!--Bridge.rendered();-->
-          }
-
-          function changeLatexText(text) {
-                var element = document.getElementById('math');
-                element.innerHTML=text;
-                MathJax.Hub.Queue(['Typeset',MathJax.Hub,element]);
-                MathJax.Hub.Queue(rendererCallBack);
-          }
-
           function loadCSS(cssStyles) {
               const link = document.createElement('link');
               link.href = `data:text/css;base64,${btoa(cssStyles)}`;
@@ -89,6 +69,10 @@
                 element.innerHTML=htmlTag;
                 MathJax.Hub.Queue(['Typeset',MathJax.Hub,element]);
                 MathJax.Hub.Queue(rendererCallBack);
+          }
+
+          function onClick(tag, data) {
+                Bridge.jsOnClick(tag, data);
           }
 
         </script>
