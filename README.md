@@ -28,7 +28,7 @@ implementation 'io.github.zoha131.scienceview:scienceview:0.0.1'
 
 * (Optional) Add your custom one or more CSS file from res/raw folder of your Android project
 ```kotlin
-scienceView.addCSS(R.raw.exam)
+scienceView.addCSS(R.raw.style)
 ```
 
 * Add HTML model and placed your data from the passed parameter. here you can also placed onclick event in the HTML tag
