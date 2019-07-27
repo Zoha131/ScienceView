@@ -41,14 +41,14 @@ public class MathJaxConfig {
     }
 
     private String input = Input.TeX.value;
-    private String output = Output.SVG.value;
+    private String output = Output.HTML_CSS.value;
     private int outputScale = 100;
     private int minScaleAdjust = 100;
     private boolean automaticLinebreaks = true;
     private int blacker = 1;
 
     public MathJaxConfig(){
-        output = Output.HTML_CSS.value;
+
     }
 
     /*public MathJaxConfig(TypedArray attrs){
