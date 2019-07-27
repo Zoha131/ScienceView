@@ -27,6 +27,7 @@ class ScienceView<T> (context: Context?= null, attrs: AttributeSet? = null) : We
 
     init {
         settings.javaScriptEnabled = true
+        //todo-me add custom config support
         addJavascriptInterface(MathJaxConfig(), "BridgeConfig")
         addJavascriptInterface(this, "Bridge")
         loadUrl("file:///android_asset/science_view.html")
@@ -55,14 +56,28 @@ class ScienceView<T> (context: Context?= null, attrs: AttributeSet? = null) : We
 
     }
 
+    //todo-me add custom js support
     /*fun addJS(@RawRes js: Int){
-        val file = context.resources.openRawResource(js)
+        scienceViewScope.launch {
+            while (!isLoaded) delay(500)
 
-        val strFile = file.bufferedReader().use { it.readText() }
-
-        loadUrl("javascript:loadJS(`$strFile`);")
-
+            val file = context.resources.openRawResource(js)
+            val strFile = file.bufferedReader().use { it.readText() }
+            loadUrl("javascript:loadJS(`$strFile`);")
+        }
     }*/
+
+    /*
+    * function loadJS(jsScript) {
+
+            BridgeConfig.backCss(jsScript);
+
+            var oScript = document.createElement("script");
+            var oScriptText = document.createTextNode(jsScript);
+            oScript.appendChild(oScriptText);
+            document.body.appendChild(oScript);
+          }
+          * */
 
     fun setModel(model: (T)-> String){
         this.model = model
